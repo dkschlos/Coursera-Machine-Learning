@@ -23,7 +23,22 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+pot_c=[0.01; 0.03; 0.1; 0.3; 1; 3; 10; 30];
+pot_sigma=[0.01; 0.03; 0.1; 0.3; 1; 3; 10; 30];
 
+for i=1:length(pot_c)
+    for j=1:length(pot_sigma)
+        model= svmTrain(X, y, pot_c(i), @(x1, x2) gaussianKernel(x1, x2, pot_sigma(j))); 
+        prediction = svmPredict(model,Xval);
+
+        error(i,j) = mean(double(prediction ~= yval));
+    end           
+end
+
+[row, column]=find(error==min(min(error)));
+
+C=pot_c(row);
+sigma=pot_sigma(column);
 
 
 
